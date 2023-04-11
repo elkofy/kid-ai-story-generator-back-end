@@ -2,13 +2,15 @@ const express = require("express");
 const cors = require("cors");
 ;
 const { Sequelize, DataTypes } = require('sequelize');
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));;
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
 app.use(cors(corsOptions));
@@ -30,16 +32,22 @@ const User = sequelize.define('User', {
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ where: { username: username, password: password } });
-    if (user) {
-        res.render('loggedin', { username: username });
-    } else {
-        res.render('login', { error: 'Invalid username or password.' });
-    }
+// To support URL-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// To parse cookies from the HTTP Request
+app.use(cookieParser());
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "hello World!" });
 });
 
+app.get("/home", (req, res) => {
+  res.json({ message: "Home page" });
+});
+
+require("./app/routes/userRoute")(app);
 require("./app/routes/openaiRoute")(app);
 app.get('/login', (req, res) => {
     res.render('login', { error: null });
