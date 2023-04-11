@@ -47,9 +47,6 @@ app.get("/home", (req, res) => {
   res.json({ message: "Home page" });
 });
 
-app.get("/login", (req, res) => {
-  res.render("login", { error: null });
-});
 // ------------------------
 
 require("./app/routes/userRoute")(app);
