@@ -1,12 +1,12 @@
 const express = require("express");
 const cors = require("cors");
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require("sequelize");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 const app = express();
 
-app.use(express.urlencoded({ extended: false }));;
+app.use(express.urlencoded({ extended: false }));
 
 var corsOptions = {
   origin: "http://localhost:8081",
@@ -16,18 +16,19 @@ app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
-const sequelize = new Sequelize('mysql://root:@localhost:3306/bdd_ia_story');
 
-const User = sequelize.define('User', {
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
+const sequelize = new Sequelize("mysql://root:@localhost:3306/bdd_ia_story");
+const User = sequelize.define("User", {
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
+
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
@@ -37,7 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // To parse cookies from the HTTP Request
 app.use(cookieParser());
 
-// simple route
+// ----- simple route -------
 app.get("/", (req, res) => {
   res.json({ message: "hello World!" });
 });
@@ -46,11 +47,13 @@ app.get("/home", (req, res) => {
   res.json({ message: "Home page" });
 });
 
+app.get("/login", (req, res) => {
+  res.render("login", { error: null });
+});
+// ------------------------
+
 require("./app/routes/userRoute")(app);
 require("./app/routes/openaiRoute")(app);
-app.get('/login', (req, res) => {
-    res.render('login', { error: null });
-});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
