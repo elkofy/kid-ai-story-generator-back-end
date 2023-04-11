@@ -1,16 +1,29 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const cors = require("cors");
 
-app.get('/', function (req, res) {
-  res.send('Hello World')
-})
+const app = express();
 
-app.get('/test', (req, res) => {
-    const mysql = require('mysql');
+var corsOptions = {
+  origin: "http://localhost:8081"
+};
 
-  res.send('test');
+app.use(cors(corsOptions));
+
+// parse requests of content-type - application/json
+app.use(express.json());
+
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "hello World!" });
 });
 
+require("./app/routes/openaiRoute")(app);
 
-app.listen(3000)
-
+// set port, listen for requests
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
