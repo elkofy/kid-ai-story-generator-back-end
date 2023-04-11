@@ -1,0 +1,9 @@
+{
+    "development": {
+      "username": "root",
+      "password": "",
+      "database": "bdd_ia_story",
+      "host": "localhost",
+      "dialect": "mysql"
+    }
+  }
