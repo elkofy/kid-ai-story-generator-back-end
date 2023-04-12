@@ -18,16 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const sequelize = new Sequelize("mysql://root:@localhost:3306/bdd_ia_story");
-const User = sequelize.define("User", {
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
