@@ -1,14 +1,13 @@
-//const db = require("../models");
-//const Tutorial = db.tutorials;
-//const Op = db.Sequelize.Op;
-const axios = require("axios");
 require("dotenv").config();
+const db = require("../models");
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 }); 
 const openai = new OpenAIApi(configuration);
-const cors = require('cors');
+const User = db.user;
+const Story = db.story;
+const Chapter = db.chapter;
 
 
 // generate story with text en picture
@@ -20,12 +19,21 @@ exports.newStory = async (req, res) => {
     return;
   }
 
+  if (!configuration.apiKey) {
+    res.status(500).json({
+      error: {
+        message: "OpenAI API key not configured, please follow instructions in README.md",
+      }
+    });
+    return;
+  }
+
   const story = req.body.story;
   const genre = req.body.genre;
   const style = req.body.style;
   const characters = req.body.characters;
 
-  prompt = `Rédige moi un paragraphe d'une histoire avec information suivante : 
+  promptText = `Rédige moi un paragraphe d'une histoire avec information suivante : 
   Sujet : ${story}
   Genre d'histoire : ${genre}
   Personnage : [${characters}]
@@ -35,18 +43,12 @@ exports.newStory = async (req, res) => {
 
   promptImage = `Fait moi une image pour un livre de genre ${genre}, avec comme sujet :${story} et comme personnage : [${characters}], avec un style d'image ${style}`;
 
-  if (!configuration.apiKey) {
-    res.status(500).json({
-      error: {
-        message: "OpenAI API key not configured, please follow instructions in README.md",
-      }
-    });
-    return;
-  }
-  const result = await generateStory(prompt,promptImage)
+  const result = await generateStory(promptText, promptImage)
+    //save chapter in BDD
+    saveStoryForUser(req.userId, result);
+    
+    //return data to frontend
     res.status(200).json(result);
-
-
 };
 
 // generate story with text en picture
@@ -99,38 +101,46 @@ async function generateImage(prompt){
   })
 }
 
-async function generateStory(prompt, promptImage) {
+async function generateParagraph(promptText){
+  return openai.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [{role: "user", content: promptText}],
+    max_tokens: 200,  
+    temperature: 0.7,
+    stop: ["#end#"],
+  }).then(async (response) => {
+  /*return openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: prompt,
+    temperature: 0.7,
+    max_tokens: 1000, 
+  }).then(async (response) => {*/
+    //res.send(response.data.choices[0]);
+    return (JSON.parse(response.data.choices[0].message.content.trim()));
+  });  
+}
 
+async function generateStory(promptText, promptImage) {
   try {
+    //const url_image = await generateImage(promptImage)
 
-    const url_image = await generateImage(promptImage)
+    //const textJson = await generateParagraph(promptText)
 
-    return openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{role: "user", content: prompt}],
-      max_tokens: 200,  
-      temperature: 0.7,
-      stop: ["#end#"],
-    }).then(async (response) => {
-    /*return openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: prompt,
-      temperature: 0.7,
-      max_tokens: 1000, 
-    }).then(async (response) => {*/
-      //res.send(response.data.choices[0]);
-      console.log(response.data.choices[0].message.content);
-      const completion = JSON.parse(response.data.choices[0].message.content.trim());
-      const returnBody = await {
-        title:completion.title,
-        story : [{
-          paragraph : completion.paragraph,
-          image: url_image,
-        }]
-      };
+    const textJson = {
+      title: "MOCK title",
+      paragraph: "MOCK paragraph"
+    };
+    const url_image = "MOCK url_image";
 
-      return returnBody;
-    })  
+    const returnBody = await {
+      title: textJson.title,
+      story : [{
+        paragraph : textJson.paragraph,
+        image: url_image,
+      }]
+    };
+
+    return returnBody;
     
   }catch(error){
     if (error.response) {
@@ -145,5 +155,30 @@ async function generateStory(prompt, promptImage) {
       };
     }
   }
+}
+
+async function saveStoryForUser(currentUserId, data){
+  console.log(data);
+  User.findOne({
+    where:{
+      userId: currentUserId
+    }
+  }).then((user) => {
+    user.createStory().then((story)=>{
+      story.createChapter({
+        title: data.title,
+        paragraph: data.story[0].paragraph,
+        image: data.story[0].image,
+      })
+    });
+    console.log("Create Story succeeded");
+  })
+
+  /*Chapter.create({
+    paragraph: data.paragraph,
+    image: data.image,
+    title: data.title,
+    storyId: null,
+  })*/
 }
 

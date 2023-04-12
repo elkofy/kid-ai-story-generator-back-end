@@ -4,7 +4,7 @@ module.exports = (sequelize, Sequelize) => {
   const Chapter = sequelize.define(
     "Chapter",
     {
-      paragraphe: {
+      paragraph: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -12,10 +12,13 @@ module.exports = (sequelize, Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      storyId: {
+      title: {
         type: DataTypes.STRING,
         allowNull: false,
       },
+    },
+    {
+      timestamps: false,
     },
     { tableName: "chapter" }
   );

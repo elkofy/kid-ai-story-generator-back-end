@@ -4,14 +4,14 @@ module.exports = (sequelize, Sequelize) => {
   const Story = sequelize.define(
     "Story",
     {
-      titleStory: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      storyId: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
       },
-      userId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+    },
+    {
+      timestamps: false,
     },
     { tableName: "story" }
   );

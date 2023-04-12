@@ -1,5 +1,8 @@
+const openai = require("../controllers/openaiController");
+const { authJwt } = require("../middleware");
+
 module.exports = (app) => {
-  const openai = require("../controllers/openaiController");
+  
 
   var router = require("express").Router();
   app.use(function (req, res, next) {
@@ -10,7 +13,7 @@ module.exports = (app) => {
     next();
   });
   // Create a new story
-  router.post("/new", openai.newStory);
+  router.post("/new", [authJwt.verifyToken], openai.newStory);
 
   // Create a new story
   router.post("/continue", openai.continueStory);
