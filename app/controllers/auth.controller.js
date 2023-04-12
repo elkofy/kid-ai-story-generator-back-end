@@ -22,6 +22,7 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
+    console.log(req.body);
     User.findOne({
         where: {
             username: req.body.username
@@ -51,7 +52,6 @@ exports.signin = (req, res) => {
             res.status(200).send({
                 id: user.id,
                 username: user.username,
-                roles: authorities,
                 accessToken: token
             });
         })

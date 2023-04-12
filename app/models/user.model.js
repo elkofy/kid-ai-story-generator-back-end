@@ -11,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  }, { tableName: 'users' });
+  }, { tableName: 'user' });
 
-  User.sync({ force: true })
+  User.sync({ alter: true })
   return User;  
 };

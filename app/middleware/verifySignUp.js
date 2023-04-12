@@ -1,7 +1,7 @@
 const db = require("../models");
 const User = db.user;
 
-checkDuplicateUsername = (req, res, next) => {
+const checkDuplicateUsername = (req, res, next) => {
   // Username
   User.findOne({
     where: {
