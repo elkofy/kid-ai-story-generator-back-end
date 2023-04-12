@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
   const Chapter = sequelize.define(
-    "Chapter",
+    "chapter",
     {
       paragraph: {
         type: DataTypes.STRING,

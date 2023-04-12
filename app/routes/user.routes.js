@@ -1,7 +1,8 @@
 const { authJwt } = require("../middleware");
-const controller = require("../controllers/user.controller");
+const controller = require("../controllers/user.Controller");
 
-module.exports = function (app) {
+module.exports = (app) => {
+  var router = require("express").Router();
   app.use(function (req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
@@ -10,7 +11,9 @@ module.exports = function (app) {
     next();
   });
 
-  app.get("/api/test/all", controller.allAccess);
+  router.get("/", controller.test);
 
-  app.get("/api/test/user", [authJwt.verifyToken], controller.userBoard);
+  router.get("/current", [authJwt.verifyToken], controller.GetCurrentUser);
+
+  app.use("/api/users", router);
 };

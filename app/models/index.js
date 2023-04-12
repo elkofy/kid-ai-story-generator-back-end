@@ -32,12 +32,12 @@ db.story = require("../models/story.model.js")(sequelize, Sequelize);
 db.chapter = require("../models/chapter.model.js")(sequelize, Sequelize);
 
 db.user.hasMany(db.story, {foreignKey: 'userId' });
+db.story.belongsTo(db.user, {foreignKey: 'userId' });
+
 db.story.hasMany(db.chapter, {foreignKey: 'storyId' });
+db.chapter.belongsTo(db.story, {foreignKey: 'storyId' });
 
 //create table if not exist
-/*db.user.sync();
-db.story.sync();
-db.chapter.sync();*/
 sequelize.sync({ alter : true }).then(() => {
   //working with our updated table
 }).catch((err) => {

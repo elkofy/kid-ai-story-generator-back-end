@@ -158,20 +158,20 @@ async function generateStory(promptText, promptImage) {
 }
 
 async function saveStoryForUser(currentUserId, data){
-  console.log(data);
   User.findOne({
     where:{
       userId: currentUserId
     }
   }).then((user) => {
     user.createStory().then((story)=>{
+      console.log("Create Story succeeded");
       story.createChapter({
         title: data.title,
         paragraph: data.story[0].paragraph,
         image: data.story[0].image,
       })
     });
-    console.log("Create Story succeeded");
+    console.log("Create Chapter succeeded");
   })
 
   /*Chapter.create({
