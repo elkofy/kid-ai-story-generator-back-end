@@ -18,15 +18,5 @@ module.exports = function(app) {
     controller.userBoard
   );
 
-  app.get(
-    "/api/test/mod",
-    controller.moderatorBoard
-  );
-
-  app.get(
-    "/api/test/admin",
-    controller.adminBoard
-  );
-
 
 };
