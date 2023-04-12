@@ -9,7 +9,7 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 
 var corsOptions = {
-  origin: "http://localhost:8081",
+  origin: "http://localhost:8080",
 };
 
 app.use(cors(corsOptions));
@@ -18,6 +18,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const sequelize = new Sequelize("mysql://root:@localhost:3306/bdd_ia_story");
+
 const User = sequelize.define("User", {
   username: {
     type: DataTypes.STRING,
@@ -27,7 +28,36 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-});
+}, {tableName: 'users'});
+
+const Story = sequelize.define("Story", {
+  sujets: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  genres: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  style_dessin: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  nom_personnages: {
+    type: DataTypes.STRING,
+  },
+  histoire: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {tableName: 'story'});
+
+module.exports = {
+  User,
+  Story
+};
+
+
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
