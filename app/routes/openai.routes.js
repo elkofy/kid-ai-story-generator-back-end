@@ -1,28 +1,26 @@
-module.exports = app => {
-    const openai = require("../controllers/openaiController");
-  
-    var router = require("express").Router();
-    app.use(function(req, res, next) {
-      res.header(
-        "Access-Control-Allow-Headers",
-        "x-access-token, Origin, Content-Type, Accept"
-      );
-      next();
-    });
-    // Create a new story
-    router.post("/new", openai.newStory);
-  
-    // Create a new story
-    router.post("/continue",openai.continueStory);
+module.exports = (app) => {
+  const openai = require("../controllers/openaiController");
 
-    // Create a new story
-    router.post("/remake", openai.remakeLastParagraph);
+  var router = require("express").Router();
+  app.use(function (req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
+  // Create a new story
+  router.post("/new", openai.newStory);
 
-    //router.get("/listAll", openai.listAllStory);//title + id
+  // Create a new story
+  router.post("/continue", openai.continueStory);
 
-    //router.get("/:id", openai.ListStoryById);//objet: story
+  // Create a new story
+  router.post("/remake", openai.remakeLastParagraph);
 
-    //a voire si un fait une route pour generer et une route pour envoyer la story
-  
-    app.use('/api/story', router);
-  };
+  //router.get("/listAll", openai.listAllStory); //title + id
+
+  //router.get("/:id", openai.ListStoryById); //objet: story
+
+  app.use("/api/story", router);
+};

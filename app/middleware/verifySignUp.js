@@ -5,12 +5,12 @@ const checkDuplicateUsername = (req, res, next) => {
   // Username
   User.findOne({
     where: {
-      username: req.body.username
-    }
-  }).then(user => {
+      username: req.body.username,
+    },
+  }).then((user) => {
     if (user) {
       res.status(400).send({
-        message: "Failed! Username is already in use!"
+        message: "Failed! Username is already in use!",
       });
       return;
     }
@@ -20,7 +20,7 @@ const checkDuplicateUsername = (req, res, next) => {
 };
 
 const verifySignUp = {
-  checkDuplicateUsername: checkDuplicateUsername
+  checkDuplicateUsername: checkDuplicateUsername,
 };
 
 module.exports = verifySignUp;
