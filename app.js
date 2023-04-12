@@ -17,8 +17,6 @@ app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
 
-const sequelize = new Sequelize("mysql://root:@localhost:3306/bdd_ia_story");
-
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
