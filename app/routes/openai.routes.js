@@ -12,9 +12,9 @@ module.exports = app => {
     // Create a new story
     router.post("/remake", openai.remakeLastParagraph);
 
-    //router.get("/listAll", openai.listAllStory);
+    //router.get("/listAll", openai.listAllStory);//title + id
 
-    //router.get("/listAll", openai.ListStoryById);
+    //router.get("/:id", openai.ListStoryById);//objet: story
 
     //a voire si un fait une route pour generer et une route pour envoyer la story
   
