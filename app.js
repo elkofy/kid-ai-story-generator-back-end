@@ -46,11 +46,10 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
   res.json({ message: "Home page" });
 });
-
 // ------------------------
 
-require("./app/routes/userRoute")(app);
-require("./app/routes/openaiRoute")(app);
+require("./app/routes/auth.routes")(app);
+require("./app/routes/user.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

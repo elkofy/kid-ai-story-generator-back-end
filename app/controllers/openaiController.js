@@ -46,10 +46,11 @@ exports.remakeLastParagraph = (req, res) => {
 
 let url = ``;
 
-function generateText(callback) {
+function generateText(params, callback) {
   axios
     .post(url, {
-      request_token: token,
+      "model": "gpt-3.5-turbo",
+      "messages": [{ "role": "user", "content": "Hello!" }]
     })
     .then((response) => {
       callback(response.data);
