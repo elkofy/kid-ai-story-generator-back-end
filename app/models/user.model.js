@@ -1,8 +1,9 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./app');
 
-const User = sequelize.define("User", {
-    login: {
+module.exports = (sequelize, Sequelize) => {
+
+  const User = sequelize.define("User", {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -10,8 +11,8 @@ const User = sequelize.define("User", {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  }, {tableName: 'users'});
-  
-  module.exports = {
-    User
-  };
+  }, { tableName: 'users' });
+
+  User.sync({ force: true })
+  return User;  
+};
