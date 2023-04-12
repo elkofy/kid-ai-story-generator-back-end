@@ -1,20 +1,24 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
-  const Story = sequelize.define(
-    "Story",
+  const Chapter = sequelize.define(
+    "Chapter",
     {
-      titleStory: {
+      paragraphe: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      userId: {
+      image: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      storyId: {
         type: DataTypes.STRING,
         allowNull: false,
       },
     },
-    { tableName: "story" }
+    { tableName: "chapter" }
   );
 
-  return Story;
+  return Chapter;
 };
