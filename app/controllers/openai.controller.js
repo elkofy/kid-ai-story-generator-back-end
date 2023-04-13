@@ -185,8 +185,8 @@ exports.remakeLastParagraph = async (req, res) => {
     const url_image = await generateImage(promptImage)*/
 
     const textJson = {
-      title: "MOCK title",
-      paragraph: "MOCK paragraph"
+      title: "MOCK new title",
+      paragraph: "MOCK new2 paragraph"
     };
     const url_image = "MOCK url_image";
 
@@ -197,6 +197,8 @@ exports.remakeLastParagraph = async (req, res) => {
       }]
     };
     //const result = await generateStory(prompt,promptImage)
+    deleteChapter(req.body.storyId)
+    saveChapter(req.body.storyId, returnBody)
     res.status(200).json(returnBody);
 
   } catch (error) {
@@ -287,8 +289,6 @@ async function saveStoryForUser(currentUserId, data) {
 }
 
 async function saveChapter(currentStoryId, data) {
-  console.log("TEST========")
-  console.log(currentStoryId)
   Story.findOne({
     where: {
       storyId: currentStoryId
@@ -299,6 +299,15 @@ async function saveChapter(currentStoryId, data) {
       image: data.story[0].image,
     })
     console.log("save chapter succeeded")
+  })
+}
+
+async function deleteChapter(currentStoryId) {
+  Chapter.findOne({
+    where: { storyId: currentStoryId },
+    order: [['createdAt', 'DESC']],
+  }).then((chapter) => {
+    chapter.destroy();
   })
 }
 
