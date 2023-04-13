@@ -188,7 +188,7 @@ exports.remakeLastParagraph = async (req, res) => {
       
     const returnBody = await {
       story : [{
-        paragraph : textJson.paragraph,
+  paragraph : textJson.paragraph,
         image: url_image,
       }]
     };  
