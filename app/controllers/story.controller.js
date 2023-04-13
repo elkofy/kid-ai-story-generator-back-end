@@ -1,6 +1,7 @@
 const db = require("../models");
 const User = db.user;
 const Story = db.story;
+const Chapter = db.chapter;
 
 exports.getAllUserStories = (req, res) => {
   User.findOne({
@@ -58,9 +59,10 @@ async function getStories(userId) {
         jsonList.push({ "id": story.storyId, 'title': story.title, "firstParagraph": chapitre.paragraph, "cover": chapitre.image })
       }
     })
-    .catch((err) => {
-      res.status(500).send("Error: can't find story");
+    .catch(() => {
+      console.log("Error: can't find story");
     });
+
   return jsonList;
 }
 
