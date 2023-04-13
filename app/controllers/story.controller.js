@@ -1,23 +1,14 @@
 const db = require("../models");
 const User = db.user;
 const Story = db.story;
+const Chapter = db.chapter;
 
 exports.getAllUserStories = (req, res) => {
-  User.findOne({
-    where: {
-      userId: req.userId,
-    },
+  getstories(req.userId).then((jsonList) => {
+    console.log("TEST=====")
+    console.log(jsonList)
+    res.status(200).json({ stories: jsonList });
   })
-    .then((user) => {
-      user.getStories().then((story) => {
-        res.status(200).json({
-          stories: story,
-        });
-      });
-    })
-    .catch(() => {
-      res.status(500).send("Error: can't find story");
-    });
 };
 
 exports.getChaptersWithStoryId = (req, res) => {
@@ -37,3 +28,54 @@ exports.getChaptersWithStoryId = (req, res) => {
       res.status(500).send("Error: can't find story");
     });
 };
+
+async function getstories(userId) {
+  let jsonList = [];
+  await User.findOne({
+    where: {
+      userId: userId,
+    },
+  })
+    .then(async (user) => {
+      return await user.getStories().then(async (stories) => {
+        let test = []
+        const array = stories.map(async (s) => {
+          const onechap = await Chapter.findOne({
+            where: {
+              storyId: s.storyId
+            }
+          });
+          let tempObj = {
+            storyId: onechap.storyId,
+            chapterOne: {
+              paragraph: onechap.paragraph,
+              image: onechap.image
+            }
+          }
+          return tempObj;
+
+        })
+
+        console.log(array)
+        return array
+      })
+    })
+    .catch((err) => {
+      // res.status(500).send("Error: can't find story");
+      console.log(err)
+    });
+}
+
+
+/*async function getstories(userId) {
+  let resultList = [];
+  let user;
+  User.findOne({
+    where: {
+      userId: userId,
+    },
+  }).then((user) => {
+    const user = u; 
+  })
+
+}*/
