@@ -47,14 +47,14 @@ exports.newStory = async (req, res) => {
   promptImage = `Fait moi une image pour un livre de genre ${genre}, avec comme sujet :${story} et comme personnage : [${characters}], avec un style d'image ${style}`;
 
   try {
-    /*const textJson = await generateParagraph(promptText)
-    const url_image = await generateImage(textJson.title)*/
+    const textJson = await generateParagraph(promptText)
+    const url_image = await generateImage(textJson.title)
 
-    const textJson = {
+/*    const textJson = {
       title: "555",
       paragraph: "555"
     };
-    const url_image = "MOCK url_image";
+    const url_image = "MOCK url_image";*/
 
     const returnBody = await {
       title: textJson.title,
@@ -89,14 +89,14 @@ exports.newStory = async (req, res) => {
 
 // generate story with text en picture
 exports.continueStory = async (req, res) => {
-  /*if (!req.body.title) {
+  if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
     return;
-  }*/
+  }
   console.log("adding paragraphe")
-  const story = req.body.paragraph;
+  const story = req.body.story[req.body.story.length-1].paragraph;
 
   prompt = `Rédige un paragraphe ${genre} court en relation avec l'histoire suivante `;
 
@@ -114,17 +114,17 @@ exports.continueStory = async (req, res) => {
     console.log(req.body)
     console.log("Start generation paragraphe")
 
-    /*const textJson = await singleParagraph(prompt,story,2)
+    const textJson = await singleParagraph(prompt,story,2)
     promptImage = `Fait moi une image style ${style},${genre} sujet :${textJson.paragraph}`;
     console.log("Start generation image")
-    const url_image = await generateImage(promptImage)*/
+    const url_image = await generateImage(promptImage)
 
-    const textJson = {
+    /*const textJson = {
       title: "MOCK title",
       paragraph: "MOCK paragraph"
     };
     const url_image = "MOCK url_image";
-
+    */
     const returnBody = await {
       story: [{
         paragraph: textJson.paragraph,
@@ -154,14 +154,14 @@ exports.continueStory = async (req, res) => {
 
 // generate story with text en picture
 exports.remakeLastParagraph = async (req, res) => {
-  if (!req.body.paragraph) {
+  if (!req.body) {
     res.status(400).send({
       message: "Content can not be empty!",
     });
     return;
   }
   console.log("redo paragraphe")
-  const story = req.body.paragraph;
+  const story = req.body.story[req.body.story.length-1].paragraph;
 
   prompt = `Je n'ai pas, fait moi un meilleur paragraphe pour le style ${genre} remplace celui la `;
 
@@ -179,17 +179,16 @@ exports.remakeLastParagraph = async (req, res) => {
     console.log(req.body)
     console.log("Start generation paragraphe")
 
-    /*const textJson = await singleParagraph(prompt,story,2)
+    const textJson = await singleParagraph(prompt,story,2)
     promptImage = `Fait moi une image style ${style}, ${genre} sujet :${textJson.paragraph}`;
     console.log("Start generation image")
-    const url_image = await generateImage(promptImage)*/
-
+    const url_image = await generateImage(promptImage)
+    /*
     const textJson = {
-      title: "MOCK new title",
       paragraph: "MOCK new2 paragraph"
     };
     const url_image = "MOCK url_image";
-
+    */
     const returnBody = await {
       story: [{
         paragraph: textJson.paragraph,

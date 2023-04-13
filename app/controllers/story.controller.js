@@ -30,7 +30,7 @@ exports.getChaptersWithStoryId = (req, res) => {
     .then((story) => {
       story.getChapters().then((chapter) => {
         res.status(200).json({
-          chapters: chapter,
+          story: chapter,
         });
       });
     })
