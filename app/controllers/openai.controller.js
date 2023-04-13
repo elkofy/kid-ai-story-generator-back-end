@@ -56,6 +56,10 @@ exports.newStory = async (req, res) => {
     };
     const url_image = "MOCK url_image";*/
 
+    if(!textJson.paragraph.endsWith(".")){
+      textJson.paragraph+=".";
+    }
+
     const returnBody = await {
       title: textJson.title,
       story: [{
@@ -125,6 +129,10 @@ exports.continueStory = async (req, res) => {
     };
     const url_image = "MOCK url_image";
     */
+    if(!textJson.paragraph.endsWith(".")){
+      textJson.paragraph+=".";
+    }
+
     const returnBody = await {
       story: [{
         paragraph: textJson.paragraph,
@@ -189,6 +197,10 @@ exports.remakeLastParagraph = async (req, res) => {
     };
     const url_image = "MOCK url_image";
     */
+    if(!textJson.paragraph.endsWith(".")){
+      textJson.paragraph+=".";
+    }
+
     const returnBody = await {
       story: [{
         paragraph: textJson.paragraph,
