@@ -3,7 +3,7 @@ const db = require("../models");
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
-}); 
+});
 const openai = new OpenAIApi(configuration);
 const User = db.user;
 const Story = db.story;
@@ -211,12 +211,12 @@ exports.remakeLastParagraph = async (req, res) => {
   //remake the last paragraph
 };
 
-async function generateImage(prompt){
+async function generateImage(prompt) {
   return openai.createImage({
     prompt: prompt,
     n: 1,
     size: "256x256",
-  }).then((responseImage)=>{
+  }).then((responseImage) => {
     return responseImage.data.data[0].url;
   })
 }
@@ -262,16 +262,17 @@ async function singleParagraph(promptText,context){
   });  
 }
 
-async function saveStoryForUser(currentUserId, data){
+async function saveStoryForUser(currentUserId, data) {
   User.findOne({
-    where:{
+    where: {
       userId: currentUserId
     }
   }).then((user) => {
-    user.createStory().then((story)=>{
+    user.createStory({
+      title: data.title,
+    }).then((story) => {
       console.log("Create Story succeeded");
       story.createChapter({
-        title: data.title,
         paragraph: data.story[0].paragraph,
         image: data.story[0].image,
       })
