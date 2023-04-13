@@ -3,7 +3,7 @@ const db = require("../models");
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
-}); 
+});
 const openai = new OpenAIApi(configuration);
 const User = db.user;
 const Story = db.story;
@@ -44,11 +44,11 @@ exports.newStory = async (req, res) => {
   promptImage = `Fait moi une image pour un livre de genre ${genre}, avec comme sujet :${story} et comme personnage : [${characters}], avec un style d'image ${style}`;
 
   const result = await generateStory(promptText, promptImage)
-    //save chapter in BDD
-    saveStoryForUser(req.userId, result);
-    
-    //return data to frontend
-    res.status(200).json(result);
+  //save chapter in BDD
+  saveStoryForUser(req.userId, result);
+
+  //return data to frontend
+  res.status(200).json(result);
 };
 
 // generate story with text en picture
@@ -75,7 +75,7 @@ exports.continueStory = async (req, res) => {
     });
     return;
   }
-  const result = await generateStory(prompt,promptImage)
+  const result = await generateStory(prompt, promptImage)
   res.status(200).json(result);
   //continue a story
 };
@@ -91,33 +91,33 @@ exports.remakeLastParagraph = (req, res) => {
   //remake the last paragraph
 };
 
-async function generateImage(prompt){
+async function generateImage(prompt) {
   return openai.createImage({
     prompt: prompt,
     n: 1,
     size: "256x256",
-  }).then((responseImage)=>{
+  }).then((responseImage) => {
     return responseImage.data.data[0].url;
   })
 }
 
-async function generateParagraph(promptText){
+async function generateParagraph(promptText) {
   return openai.createChatCompletion({
     model: "gpt-3.5-turbo",
-    messages: [{role: "user", content: promptText}],
-    max_tokens: 200,  
+    messages: [{ role: "user", content: promptText }],
+    max_tokens: 200,
     temperature: 0.7,
     stop: ["#end#"],
   }).then(async (response) => {
-  /*return openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: prompt,
-    temperature: 0.7,
-    max_tokens: 1000, 
-  }).then(async (response) => {*/
+    /*return openai.createCompletion({
+      model: "text-davinci-003",
+      prompt: prompt,
+      temperature: 0.7,
+      max_tokens: 1000, 
+    }).then(async (response) => {*/
     //res.send(response.data.choices[0]);
     return (JSON.parse(response.data.choices[0].message.content.trim()));
-  });  
+  });
 }
 
 async function generateStory(promptText, promptImage) {
@@ -134,15 +134,15 @@ async function generateStory(promptText, promptImage) {
 
     const returnBody = await {
       title: textJson.title,
-      story : [{
-        paragraph : textJson.paragraph,
+      story: [{
+        paragraph: textJson.paragraph,
         image: url_image,
       }]
     };
 
     return returnBody;
-    
-  }catch(error){
+
+  } catch (error) {
     if (error.response) {
       //console.error(error.response.status, error.response.data);
       return error.response.data;
@@ -157,16 +157,17 @@ async function generateStory(promptText, promptImage) {
   }
 }
 
-async function saveStoryForUser(currentUserId, data){
+async function saveStoryForUser(currentUserId, data) {
   User.findOne({
-    where:{
+    where: {
       userId: currentUserId
     }
   }).then((user) => {
-    user.createStory().then((story)=>{
+    user.createStory({
+      title: data.title,
+    }).then((story) => {
       console.log("Create Story succeeded");
       story.createChapter({
-        title: data.title,
         paragraph: data.story[0].paragraph,
         image: data.story[0].image,
       })

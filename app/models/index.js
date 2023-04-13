@@ -3,9 +3,9 @@ const Sequelize = require("sequelize");
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   host: config.HOST,
   dialect: config.dialect,
-  /*dialectOptions: {
-      socketPath: '/Applications/WAMP/tmp/mysql/mysql.sock'
-    },*/
+  dialectOptions: {
+    socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock'
+  },
   pool: {
     max: config.pool.max,
     min: config.pool.min,
@@ -31,17 +31,17 @@ db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.story = require("../models/story.model.js")(sequelize, Sequelize);
 db.chapter = require("../models/chapter.model.js")(sequelize, Sequelize);
 
-db.user.hasMany(db.story, {foreignKey: 'userId' });
-db.story.belongsTo(db.user, {foreignKey: 'userId' });
+db.user.hasMany(db.story, { foreignKey: 'userId' });
+db.story.belongsTo(db.user, { foreignKey: 'userId' });
 
-db.story.hasMany(db.chapter, {foreignKey: 'storyId' });
-db.chapter.belongsTo(db.story, {foreignKey: 'storyId' });
+db.story.hasMany(db.chapter, { foreignKey: 'storyId' });
+db.chapter.belongsTo(db.story, { foreignKey: 'storyId' });
 
 //create table if not exist
-sequelize.sync({ alter : true }).then(() => {
+sequelize.sync({ alter: true }).then(() => {
   //working with our updated table
 }).catch((err) => {
- console.log(err);
+  console.log(err);
 });
 
 module.exports = db;

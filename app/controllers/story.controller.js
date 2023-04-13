@@ -3,12 +3,12 @@ const User = db.user;
 const Story = db.story;
 const Chapter = db.chapter;
 
-exports.getAllUserStories = (req, res) => {
-  getstories(req.userId).then((jsonList) => {
-    console.log("TEST=====")
-    console.log(jsonList)
-    res.status(200).json({ stories: jsonList });
-  })
+exports.getAllUserStories = async (req, res) => {
+  const stories = await getstories(req.userId)
+  console.log(stories)
+  res.status(200).json({
+    stories: stories
+  });
 };
 
 exports.getChaptersWithStoryId = (req, res) => {
@@ -38,7 +38,7 @@ async function getstories(userId) {
   })
     .then(async (user) => {
       return await user.getStories().then(async (stories) => {
-        let test = []
+        //let test = []
         const array = stories.map(async (s) => {
           const onechap = await Chapter.findOne({
             where: {
@@ -55,8 +55,6 @@ async function getstories(userId) {
           return tempObj;
 
         })
-
-        console.log(array)
         return array
       })
     })
