@@ -14,13 +14,17 @@ module.exports = (app) => {
   // Create a new story
   router.post("/new", [authJwt.verifyToken], openAiController.newStory);
 
+  //router.post("/new" , openAiController.newStory);
+  
   // Create a new story
-  router.post("/continue", openAiController.continueStory);
+  router.post("/continue", [authJwt.verifyToken], openAiController.continueStory);
 
   // Create a new story
-  router.post("/remake", openAiController.remakeLastParagraph);
+  router.post("/remake", [authJwt.verifyToken], openAiController.remakeLastParagraph);
 
-  router.get("/all", [authJwt.verifyToken], storyController.getAllUserStories); //title + id
+  //router.patch("/remake" , openAiController.newStory);
+
+  router.get("/all", [authJwt.verifyToken], storyController.getAllUserStories);
 
   router.get("/:storyId", [authJwt.verifyToken], storyController.getChaptersWithStoryId); //objet: story
 

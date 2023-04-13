@@ -47,28 +47,31 @@ exports.newStory = async (req, res) => {
   promptImage = `Fait moi une image pour un livre de genre ${genre}, avec comme sujet :${story} et comme personnage : [${characters}], avec un style d'image ${style}`;
 
   try {
-    const textJson = await generateParagraph(promptText)
-    const url_image = await generateImage(textJson.title)
+    /*const textJson = await generateParagraph(promptText)
+    const url_image = await generateImage(textJson.title)*/
 
-    /*const textJson = {
-      title: "MOCK title",
-      paragraph: "MOCK paragraph"
+    const textJson = {
+      title: "555",
+      paragraph: "555"
     };
-    const url_image = "MOCK url_image";*/
-      
+    const url_image = "MOCK url_image";
+
     const returnBody = await {
       title: textJson.title,
-      story : [{
-        paragraph : textJson.paragraph+".",
+      story: [{
+        paragraph: textJson.paragraph + ".",
         image: url_image,
       }]
-    };  
+    };
     //save chapter in BDD
-    saveStoryForUser(req.userId, returnBody);
+    saveStoryForUser(req.userId, returnBody).then((storyId) => {
+      returnBody.storyId = storyId;
+      res.status(200).json(returnBody);
+    })
     //return data to frontend
-    res.status(200).json(returnBody);
-  
-  }catch(error){
+
+
+  } catch (error) {
     if (error.response) {
       //console.error(error.response.status, error.response.data);
       return error.response.data;
@@ -81,7 +84,7 @@ exports.newStory = async (req, res) => {
       };
     }
   }
-  
+
 };
 
 // generate story with text en picture
@@ -93,7 +96,7 @@ exports.continueStory = async (req, res) => {
     return;
   }*/
   console.log("adding paragraphe")
-  const story = req.body.paragraph  ;
+  const story = req.body.paragraph;
 
   prompt = `Rédige un paragraphe ${genre} court en relation avec l'histoire suivante `;
 
@@ -111,27 +114,28 @@ exports.continueStory = async (req, res) => {
     console.log(req.body)
     console.log("Start generation paragraphe")
 
-    const textJson = await singleParagraph(prompt,story,2)
+    /*const textJson = await singleParagraph(prompt,story,2)
     promptImage = `Fait moi une image style ${style},${genre} sujet :${textJson.paragraph}`;
     console.log("Start generation image")
-    const url_image = await generateImage(promptImage)
+    const url_image = await generateImage(promptImage)*/
 
-    /*const textJson = {
+    const textJson = {
       title: "MOCK title",
       paragraph: "MOCK paragraph"
     };
-    const url_image = "MOCK url_image";*/
-      
+    const url_image = "MOCK url_image";
+
     const returnBody = await {
-      story : [{
-        paragraph : textJson.paragraph,
+      story: [{
+        paragraph: textJson.paragraph,
         image: url_image,
       }]
-    };  
+    };
     //const result = await generateStory(prompt,promptImage)
     res.status(200).json(returnBody);
+    saveChapter(req.body.storyId, returnBody)
 
-  }catch(error){
+  } catch (error) {
     if (error.response) {
       //console.error(error.response.status, error.response.data);
       return error.response.data;
@@ -144,7 +148,7 @@ exports.continueStory = async (req, res) => {
       };
     }
   }
-  
+
   //continue a story
 };
 
@@ -157,7 +161,7 @@ exports.remakeLastParagraph = async (req, res) => {
     return;
   }
   console.log("redo paragraphe")
-  const story = req.body.paragraph  ;
+  const story = req.body.paragraph;
 
   prompt = `Je n'ai pas, fait moi un meilleur paragraphe pour le style ${genre} remplace celui la `;
 
@@ -175,27 +179,27 @@ exports.remakeLastParagraph = async (req, res) => {
     console.log(req.body)
     console.log("Start generation paragraphe")
 
-    const textJson = await singleParagraph(prompt,story,2)
+    /*const textJson = await singleParagraph(prompt,story,2)
     promptImage = `Fait moi une image style ${style}, ${genre} sujet :${textJson.paragraph}`;
     console.log("Start generation image")
-    const url_image = await generateImage(promptImage)
+    const url_image = await generateImage(promptImage)*/
 
-    /*const textJson = {
+    const textJson = {
       title: "MOCK title",
       paragraph: "MOCK paragraph"
     };
-    const url_image = "MOCK url_image";*/
-      
+    const url_image = "MOCK url_image";
+
     const returnBody = await {
-      story : [{
-  paragraph : textJson.paragraph,
+      story: [{
+        paragraph: textJson.paragraph,
         image: url_image,
       }]
-    };  
+    };
     //const result = await generateStory(prompt,promptImage)
     res.status(200).json(returnBody);
 
-  }catch(error){
+  } catch (error) {
     if (error.response) {
       //console.error(error.response.status, error.response.data);
       return error.response.data;
@@ -207,7 +211,7 @@ exports.remakeLastParagraph = async (req, res) => {
         }
       };
     }
-  }  
+  }
   //remake the last paragraph
 };
 
@@ -221,7 +225,7 @@ async function generateImage(prompt) {
   })
 }
 
-async function generateParagraph(promptText){
+async function generateParagraph(promptText) {
   return openai.createCompletion({
     model: modelEngine,
     prompt: promptText,
@@ -232,14 +236,14 @@ async function generateParagraph(promptText){
   }).then(async (response) => {
     var text = response.data.choices[0].text.trim()
     console.log(text)
-    if(!text.endsWith("}"))
-      text+= "\"}"
-      
+    if (!text.endsWith("}"))
+      text += "\"}"
+
     return (JSON.parse(text));
-  });  
+  });
 }
 
-async function singleParagraph(promptText,context){
+async function singleParagraph(promptText, context) {
   const updatedContext = `${promptText} : ${context}`;
   //console.log("continue prompt : "+updatedContext)
   return openai.createCompletion({
@@ -249,26 +253,26 @@ async function singleParagraph(promptText,context){
     n: 1,
     stop: null,
     temperature: 0.7,
-  }).then(async (response) => { 
+  }).then(async (response) => {
     var text = `{"paragraph":"${response.data.choices[0].text.trim()}"}`
     console.log(text)
-    if(!text.endsWith("}")){
+    if (!text.endsWith("}")) {
       console.log("ici")
-      text+= '"}'
+      text += '"}'
       console.log(text)
     }
-      
+
     return (JSON.parse(text));
-  });  
+  });
 }
 
 async function saveStoryForUser(currentUserId, data) {
-  User.findOne({
+  return User.findOne({
     where: {
       userId: currentUserId
     }
   }).then((user) => {
-    user.createStory({
+    return user.createStory({
       title: data.title,
     }).then((story) => {
       console.log("Create Story succeeded");
@@ -276,15 +280,25 @@ async function saveStoryForUser(currentUserId, data) {
         paragraph: data.story[0].paragraph,
         image: data.story[0].image,
       })
+      console.log("Create Chapter succeeded");
+      return story.storyId
     });
-    console.log("Create Chapter succeeded");
   })
+}
 
-  /*Chapter.create({
-    paragraph: data.paragraph,
-    image: data.image,
-    title: data.title,
-    storyId: null,
-  })*/
+async function saveChapter(currentStoryId, data) {
+  console.log("TEST========")
+  console.log(currentStoryId)
+  Story.findOne({
+    where: {
+      storyId: currentStoryId
+    }
+  }).then((story) => {
+    story.createChapter({
+      paragraph: data.story[0].paragraph,
+      image: data.story[0].image,
+    })
+    console.log("save chapter succeeded")
+  })
 }
 
