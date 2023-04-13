@@ -1,7 +1,7 @@
 module.exports = {
     HOST: "localhost",
     USER: "root",
-    PASSWORD: "", //For windows PASSWORD: "" || For mac PASSWORD: "root"
+    PASSWORD: "root", //For windows PASSWORD: "" || For mac PASSWORD: "root"
     DB: "bdd_ia_story",
     dialect: "mysql",
     pool: {
