@@ -42,7 +42,7 @@ exports.newStory = async (req, res) => {
   Les noms lersonnages : [${characters}]
   Il faut un titre, si un des champs est vide invente toi même.
   Ta réponse doit être formaté en JSON avec le model : {"title":"","paragraph":""}
-  Quoi qu'il arrive j'ai besoin que tu referme l'object json`;
+  Quoi qu'il arrive j'ai besoin que tu referme l'object json.`;
 
 
   try {
