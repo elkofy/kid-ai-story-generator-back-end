@@ -36,18 +36,23 @@ exports.newStory = async (req, res) => {
   style = req.body.style;
   const characters = req.body.characters;
 
-  promptText = `Rédige une histoire courte avec information suivante : 
+  promptText = `Rédige une histoire en quatre phrases avec information suivante : 
   Sujet : ${story}
   Genre d'histoire : ${genre}
-  Personnage : [${characters}]
-  Il faut un titre, si le champ personnage est vide il faudras que tu les crées toi même.
-  T'a réponse devras être formaté en JSON avec le model suivant : {"title":"","paragraph":""}
+  Les noms lersonnages : [${characters}]
+  Il faut un titre, si un des champs est vide invente toi même.
+  Ta réponse doit être formaté en JSON avec le model : {"title":"","paragraph":""}
   Quoi qu'il arrive j'ai besoin que tu referme l'object json et que tu finise avec un point.`;
 
-  promptImage = `Fait moi une image pour un livre de genre ${genre}, avec comme sujet :${story} et comme personnage : [${characters}], avec un style d'image ${style}`;
 
   try {
     const textJson = await generateParagraph(promptText)
+    
+    if(!textJson.paragraph.trim().endsWith(".")){
+      textJson.paragraph+=".";
+    }
+
+    promptImage = `Fait moi une image de livre ${genre}, avec un style d'image ${style}, pour l'histoire : ${textJson.paragraph}`;
     const url_image = await generateImage(textJson.title)
 
 /*    const textJson = {
@@ -56,14 +61,12 @@ exports.newStory = async (req, res) => {
     };
     const url_image = "MOCK url_image";*/
 
-    if(!textJson.paragraph.endsWith(".")){
-      textJson.paragraph+=".";
-    }
+    
 
     const returnBody = await {
       title: textJson.title,
       story: [{
-        paragraph: textJson.paragraph + ".",
+        paragraph: textJson.paragraph,
         image: url_image,
       }]
     };
@@ -102,12 +105,12 @@ exports.continueStory = async (req, res) => {
   console.log("adding paragraphe")
   const story = req.body.story[req.body.story.length-1].paragraph;
 
-  prompt = `Rédige un paragraphe ${genre} court en relation avec l'histoire suivante `;
+  prompt = `Rédige un paragraphe ${genre} de quatre phrase en relation avec l'histoire suivante `;
 
 
   if (!configuration.apiKey) {
     res.status(500).json({
-      error: {
+      error: {  
         message: "OpenAI API key not configured, please follow instructions in README.md",
       }
     });
@@ -129,7 +132,7 @@ exports.continueStory = async (req, res) => {
     };
     const url_image = "MOCK url_image";
     */
-    if(!textJson.paragraph.endsWith(".")){
+    if(!textJson.paragraph.trim().endsWith(".")){
       textJson.paragraph+=".";
     }
 
@@ -171,7 +174,7 @@ exports.remakeLastParagraph = async (req, res) => {
   console.log("redo paragraphe")
   const story = req.body.story[req.body.story.length-1].paragraph;
 
-  prompt = `Je n'ai pas, fait moi un meilleur paragraphe pour le style ${genre} remplace celui la `;
+  prompt = `Je n'aime pas, refait un meilleur paragraphe de quatre phrases avec un style ${genre} remplace celui la `;
 
 
   if (!configuration.apiKey) {
@@ -188,7 +191,7 @@ exports.remakeLastParagraph = async (req, res) => {
     console.log("Start generation paragraphe")
 
     const textJson = await singleParagraph(prompt,story,2)
-    promptImage = `Fait moi une image style ${style}, ${genre} sujet :${textJson.paragraph}`;
+    promptImage = `Fait moi une image style ${style}, pour une histoire ${genre} sujet :${textJson.paragraph}`;
     console.log("Start generation image")
     const url_image = await generateImage(promptImage)
     /*
@@ -197,7 +200,7 @@ exports.remakeLastParagraph = async (req, res) => {
     };
     const url_image = "MOCK url_image";
     */
-    if(!textJson.paragraph.endsWith(".")){
+    if(!textJson.paragraph.trim().endsWith(".")){
       textJson.paragraph+=".";
     }
 
