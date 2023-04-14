@@ -42,7 +42,7 @@ exports.newStory = async (req, res) => {
   Les noms lersonnages : [${characters}]
   Il faut un titre, si un des champs est vide invente toi même.
   Ta réponse doit être formaté en JSON avec le model : {"title":"","paragraph":""}
-  Quoi qu'il arrive j'ai besoin que tu referme l'object json et que tu finise avec un point.`;
+  Quoi qu'il arrive j'ai besoin que tu referme l'object json`;
 
 
   try {
@@ -105,7 +105,7 @@ exports.continueStory = async (req, res) => {
   console.log("adding paragraphe")
   const story = req.body.story[req.body.story.length-1].paragraph;
 
-  prompt = `Rédige un paragraphe ${genre} de quatre phrase en relation avec l'histoire suivante `;
+  prompt = `Rédige un paragraphe cours de ${genre} de quatre phrase en relation avec l'histoire suivante `;
 
 
   if (!configuration.apiKey) {
